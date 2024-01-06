@@ -1,0 +1,19 @@
+---
+layout: page
+title: "Code"
+description: "Code Projects"
+header-img: "img/bg-me-2022.jpg"
+header-mask: 0.3
+multilingual: true
+---
+
+{% include multilingual-sel.html %}
+
+<!-- English Version -->
+<div class="en post-container">
+    {% capture code_code %}{% include code/code.md %}{% endcapture %}
+    {{ about_en | markdownify }}
+</div>
+
+
+
