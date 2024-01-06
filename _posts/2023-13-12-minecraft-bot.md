@@ -3,14 +3,15 @@ layout:     post
 title:      "Creating a Minecraft Discord Integration Bot"
 subtitle:   "A modular Discord bot for Minecraft server commands and monitoring in Grafana"
 date:       2023-12-13 12:00:00
-author:     "ropeadope62"
+author:     "Dave C"
 catalog: true
 published: true
-header-style: text
+header-mask: 0.3
+header-img: "img/in-post/post-minecraft-discord/header_bg.png"
 tags:
   - minecraft
   - discord
-  - dev
+  - code
   - python
   - bots
 ---
