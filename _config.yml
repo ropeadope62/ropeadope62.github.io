@@ -5,7 +5,7 @@ header-img: img/home-bg.png
 email: davechadwick@gmail.com
 description: "Personal Blog, Portfolio and Art by Dave Chadwick"
 keyword: "dave chadwick, art of failing, the art of failing, python, discord"
-url: "https://www.artoffailing.com" # your host, for absolute URL
+url: "https://artoffailing.com" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
