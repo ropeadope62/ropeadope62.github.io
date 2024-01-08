@@ -12,7 +12,7 @@ baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
 future: true
 
 # SNS settings
-RSS: false
+RSS: true
 github_username: ropeadope62
 twitter_username: davebruu
 linkedin_username:  davecjc
@@ -32,13 +32,7 @@ exclude:
     "README.zh.md",
   ]
 anchorjs: true # if you want to customize anchor. check out line:181 of `post.html`
-# If you have timezone issue (e.g. #68) in China, uncomment to use this:
-#timezone: CN
 
-# Gems
-# from PR#40, to support local preview for Jekyll 3.0
-# make sure you have this gem installed
-# `$ gem install jekyll-paginate`
 plugins: [jekyll-paginate]
 
 # Markdown settings
@@ -67,8 +61,8 @@ ga_domain: davec.bio
 
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
-sidebar-about-description: ""
-sidebar-avatar: 
+sidebar-about-description: "Hi, I'm Dave, an information security engineer working in large financials for over 10 years. I'm a big fan of Python, Drawing, Sim Racing and playing guitar. I'm also a big fan of failing, and learning from it."
+sidebar-avatar: /img/aof_avatar.png
 
 # Featured Tags
 featured-tags: true # whether or not using Feature-Tags

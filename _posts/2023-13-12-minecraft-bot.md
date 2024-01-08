@@ -6,7 +6,7 @@ date:       2023-12-13 12:00:00
 author:     "Dave C"
 catalog: true
 published: true
-header-mask: 0.3
+header-mask: 0.5
 header-img: "img/in-post/post-minecraft-discord/header_bg.png"
 tags:
   - minecraft
