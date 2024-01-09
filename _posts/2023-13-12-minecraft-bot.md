@@ -54,6 +54,7 @@ My write up to follow details the approach to building a of a Minecraft Server i
    - Commands should follow a modular design principle and be able to be
    loaded to a number of discord bots as a cog/extension
 
+![Alt text](/img/in-post/post-minecraft-discord/quantum_craft_diagram.png)
 
 ## Creating the Bot in Discord.py
 
@@ -87,6 +88,8 @@ There are 3 modules which are required which are not included in python's standa
 -	**Logging**: allows us to create a log handler for organization of our bot logs. 
 -	**Discord.app_commands**: a newer addition to the Discord API which allows implementation of Slash Commands in Discord bots. These commands provide a more integrated and user-friendly way for users to interact with bots directly in the Discord client.
 -	**Discord.commands**: the more traditional commands package for Discord.py, allowing users to send a command to the discord API using a message prefix and text command. Standard commands support access to a *context* object that provides information about the message, channel, guild, and user who invoked the command.
+-   **os**: We will use os to load our environment variables in our code with `os.getenv`
+-   **io**: io is an extremely useful library when it comes to performing file I/O operations such as reading and writing from the disk. Initially, we will use this just for writing and reading our log files with `io.Bytesio`. 
 
 I imported the traditional Discord commands package which is standard for any project, but I think Slash Commands are going to be very useful here, since they integrate with the discord UI to allow for auto complete suggestions, command completion and an overall more user friendly experience while interacting with the bot. 
 
@@ -180,8 +183,11 @@ We assign the logger attribute of the bot to the variable ‘logger’. Since bo
 ```python
 class Bot: 
     def do_thing():
-        print("Doing the thing")
-        logger.info("Doing the thing")
+        try: 
+            print("Doing the thing")
+            logger.info("Did the thing")
+        except Exception as e:
+            logger.error("Couldn't do the thing")
 ```
 
 ### Security Considerations – Command Invocation 
@@ -236,7 +242,7 @@ class QCAdmin(commands.Cog):
 Since QCAdmin will act as the bot itself, we set the bot object as an attribute of QCAdmin with `self.bot = bot`. 
 Now, when we create an instance of QCAdmin, the bot object is included with it. Here’s an example by just entering our code so far in Python and instantiating a new instance of QCAdmin. 
 
-IMAGE
+![Alt text](/img/in-post/post-minecraft-discord/class-instance-test.png)
 
 Perfect, in this example we created a new instance of QCAdmin named an_instance, and demonstrated that the bot object was inherited as one of its attributes. 
 
@@ -257,14 +263,20 @@ if __name__ == '__main__':
 There are a couple of things to unpack here, but essentially this code will act as an entry point of a script that runs a Discord bot which we call ‘main()’. To make sure main() is launched as a coroutine, we use `asyncio.run()` function to run it. 
 Here's a breakdown of the code:
 
-1. `if __name__ == '__main__':` This line checks if the script is being run directly. In Python, `__name__` is a special variable that is set to the name of the module if it's imported, or `'__main__'` if the script is run directly. This check is used to prevent the code from running if the script is imported as a module.
+1. `if __name__ == '__main__':` This line checks if the script is being run directly. 
+    * In Python, `__name__` is a special variable that is set to the name of the module if it's imported, or `'__main__'` if the script is run directly. 
+    * This check is used to prevent the code from running if the script is imported as a module.
    
-2. `asyncio.run(main())`: This line runs the `main()` coroutine using the `asyncio.run()` function. `asyncio.run()` is a convenience function that creates an event loop, runs a coroutine, and closes the loop. 
+2. `asyncio.run(main())`: This line runs the `main()` coroutine using the `asyncio.run()` function. 
+    *`asyncio.run()` is a convenience function that creates an event loop, runs a coroutine, and closes the loop. 
+
 Inside our `main()` coroutine: 
 
 3. `await bot.add_cog(QCAdmin(bot))`: This line adds QCAdmin as a "cog" to the bot. This includes all attributes and methods of the QCAdmin class.
    
-4. `await bot.start(os.getenv('DISCORD_API_TOKEN'))`: This line starts the bot. `os.getenv('DISCORD_API_TOKEN')` retrieves the bot's API token from the environment variables. The API token is used to authenticate the bot with the Discord API.
+2. `await bot.start(os.getenv('DISCORD_API_TOKEN'))`: This line starts the bot and the API token needs to be supplied. 
+    *  `os.getenv('DISCORD_API_TOKEN')` retrieves the bot's API token from the environment variables. 
+    *  The API token is used to authenticate the bot with the Discord API.
 
 If you run this code, you will just see a blinking cursor in command line, this is a good thing. We are now connected to the discord API but the bot has no additional tasks and is waiting for an event to occur. I like having some feedback once we connect providing us with some basic information about the environment. The best way to do this is to use the `@bot.event` decorator, which can be used to register an event which will occur when the bot successfully authenticates to the discord API. The event itself is a function named `on_ready()` which will print some basic information about the API connection, bot and loaded extensions. 
 
@@ -313,29 +325,35 @@ Perfect! Let’s write some real commands, but first let’s do a little more pl
 
 Rather creating a bunch of commands with no structure, it helps to group commands by their command type, and then include the same type of commands as subcommands. Let’s take some commands as an example which we think we will need. 
 
--	Get the bot log
--	Clear the bot log
--	Load a cog
--	Unload a cog 
--	Get loaded cogs
+* Get the bot log
+* Clear the bot log
+* Load a cog
+* Unload a cog 
+* Get loaded cogs
+* Reload a cog 
 
 Without grouping we could just name the commands to keep them as self explanatory as possible:
 
-- /getlog 
-- /clearlog
-- /loadcog
-- /unloadcog
-- /showcogs
+* /getlog 
+* /clearlog
+* /coginformation
+* /loadcog
+* /unloadcog
+* /showcogs
+* /reloadcog
 
 Now if we categorize and group the commands, logically they should look like this: 
 
-- /admin log
-- /admin log clear 
-- /cog load
-- /cog unload
-- /cog list 
+* /admin log
+* /admin log clear 
+* <span style="color: blue;">/cog info</span>
+* <span style="color: blue;">/cog load</span>
+* <span style="color: blue;">/cog unload</span>
+* <span style="color: blue;">/cog list</span>
+* <span style="color: blue;">/cog reload</span>
 
-Much better! We have two command groups, admin and cog, which will serve us well for organizing the basic entry point commands and is especially useful when it comes to slash commands. More on that later, for now, lets make our command groups. 
+
+Much better! We have two command groups, admin and <span style="color: blue;">cog</span>, which will serve us well for organizing the basic entry point commands and is especially useful when it comes to slash commands. More on that later, for now, lets make our command groups. 
 
 ```python
 admin = app_commands.Group(name="admin", description="Admin commands for the bot.")
@@ -543,11 +561,11 @@ One of the primary use cases for this bot is to be able to send commands directl
 ### Initial Steps
 
 Before anything, I had pagraignix enable RCON on the gameserver itself, adding the following entries to the server.properties file. 
-
+```
 enable-rcon=true
 rcon.port=port_number
 rcon.password= rcon_password
-
+```
 
 And before we get started with our cog file, install mcrcon with pip. 'Pip install mcrcon'. Make sure its installed in he same virtual environment we were working in while creating main.py.
 
@@ -597,21 +615,28 @@ We can also use our same log handler as defined in main.py, since we are passing
 The MCRcon library provides a straightforward implementation of Minecraft’s Rcon protocol in Python to provide a client for handling Remote Commands (RCON) to a Minecraft server.
 The recommend way to run this client is using the python ‘with’ statement. This ensures that the socket is correctly closed when you are done with it rather than being left open.
 Example:
-In [1]: from mcrcon import MCRcon
-In [2]: with MCRcon("10.1.1.1", "sekret") as mcr:
-   ...:     resp = mcr.command("/whitelist add bob")
-   ...:     print(resp)
 
-While you can use it without the ‘with’ statement, you have to connect manually, and ideally disconnect:
+```python
+from mcrcon import MCRcon
+with MCRcon("10.1.1.1", "sekret") as mcr:
+    resp = mcr.command("/whitelist add bob")
+    print(resp)
+```
 
-In [3]: mcr = MCRcon("10.1.1.1", "sekret")
-In [4]: mcr.connect()
-In [5]: resp = mcr.command("/whitelist add bob")
-In [6]: print(resp)
-In [7]: mcr.disconnect()	
+While you can use it without the ‘with’ statement, you have to connect manually, and ideally disconnect. I think you'll agree - the code just doesn't read as nicely:
+
+```python
+mcr = MCRcon("10.1.1.1", "sekret")
+mcr.connect()
+resp = mcr.command("/whitelist add bob")
+print(resp)
+mcr.disconnect()	
+```
+
+### Our first Minecraft RCON command - "Say"
 
 So like our ping command we wrote for QCAdmin which would make the bot respond in the server to a user message – Let’s make it much cooler and have the bot respond in the Minecraft server! 
-Creating another slash commands group, let’s call it.. rcon. And then with our decorator @rcon.command, enter the slash command name and description. 
+Creating another slash commands group, let’s call it.. **rcon**. And then with our decorator `@rcon.command`, enter the slash command name and description. 
 As most of the time with discord bots, we want to create an asynchronous function and our goal is that when the command is executed, the function say(self, *thing_to_say: str) is called. 
 
 In the function, a command string is created using f-string formatting. It concatenates the word "say" with the thing_to_say arguments passed to the command. I really love this method of a means to submit arguments of multiple words including spaces. It is particularly useful for submitting written sentences as arguments. An asterisk before the argument will join all of the words together into one string to be passed to the function. 
@@ -631,6 +656,33 @@ Next, a context manager is used with the MCRcon object, which connects to the Mi
 
 Within the context, the command method of the MCRcon object is called with the command string as an argument. This sends the command to the Minecraft server using the RCON protocol and retrieves the response.
 
-So all we need to do is use our user arguments to send that string to the MCRcon command method, and in this case, we just need to pass our command concatenations as a single string: `command = f"say {thing_to_say}"``. Easy, we are just making commands to be written into the game console afterall. As per the guidelines for proper gameserver socket management, we use with `MCRcon(rcon_host, rcon_password, port=rcon_port)`` to establish our connection. Then we set a variable or our response and define it as mcr.command(command) which is the method which sends our string to the server console. 
+So all we need to do is use our user arguments to send that string to the MCRcon command method, and in this case, we just need to pass our command concatenations as a single string: `command = f"say {thing_to_say}"`. Easy, we are just making commands to be written into the game console after all. As per the guidelines for proper gameserver socket management, we use with `MCRcon(rcon_host, rcon_password, port=rcon_port)`` to establish our connection. Then we set a variable or our response and define it as mcr.command(command) which is the method which sends our string to the server console. 
+
+### Our Second Command - Essentials: Ping
+
+Which server admin doesn't obsess about server client latency? Let's make a command to monitor the latency between the discord bot and the gameserver. 
+
+I'm sure there are several modules specifically for latency monitoring but for this simple calculation, Python's native `time.time()` will take return the current time in seconds since the Epoch, which is a specific time reference in the past. To calculate the time between the rcon request and response, we can take two measures of time.time() and calculate the time in seconds between them. 
+
+Let's call our two measures, `start_time` and `end_time`, measure their difference, and convert that number from seconds to milliseconds (ms). Latency is never presented in decimals so lets round our result by encapsulating our time difference - ```end_time - start_time``` with ```round()```.
+
+```python
+@rcon.command(name="status", description="Check the server status.")
+    async def status(self, Interaction: discord.Interaction):
+        """ Check the server status."""
+        try:
+            start_time = time.time()
+            command = f"status"
+            with MCRcon(rcon_host, rcon_password, port=rcon_port) as mcr:
+                response = mcr.command(command)
+                end_time = time.time()
+            # get the ping of the server, start time - end time * 1000 to get the latency in ms
+            latency = round((end_time - start_time) * 1000)  
+            await Interaction.response.send_message(f"Server Status: {response}\nLatency: {latency}ms")
+            self.logger.info(f"Server Status: {response}\nLatency: {latency}ms")
+        except Exception as e:
+            await Interaction.response.send_message(f"Failed to retrieve server status: {e}")
+            self.logger.error(f"Failed to retrieve server status: {e}")
+            ```
 
 
