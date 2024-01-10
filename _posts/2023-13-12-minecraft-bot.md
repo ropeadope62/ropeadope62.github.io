@@ -664,7 +664,7 @@ Which server admin doesn't obsess about server client latency? Let's make a comm
 
 I'm sure there are several modules specifically for latency monitoring but for this simple calculation, Python's native `time.time()` will take return the current time in seconds since the Epoch, which is a specific time reference in the past. To calculate the time between the rcon request and response, we can take two measures of time.time() and calculate the time in seconds between them. 
 
-Let's call our two measures, `start_time` and `end_time`, measure their difference, and convert that number from seconds to milliseconds (ms). Latency is never presented in decimals so lets round our result by encapsulating our time difference - ```end_time - start_time``` with ```round()```.
+Let's call our two measures, `start_time` and `end_time`, measure their difference, and convert that number from seconds to milliseconds (ms). Latency is never presented in decimals so lets round our result by encapsulating our time difference - ```end_time - start_time``` with ```round()``` .
 
 ```python
 @rcon.command(name="status", description="Check the server status.")
@@ -683,6 +683,6 @@ Let's call our two measures, `start_time` and `end_time`, measure their differen
         except Exception as e:
             await Interaction.response.send_message(f"Failed to retrieve server status: {e}")
             self.logger.error(f"Failed to retrieve server status: {e}")
-            ```
+```
 
 
