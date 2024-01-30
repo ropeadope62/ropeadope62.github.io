@@ -2,7 +2,7 @@
 layout:     post
 title:      "Creating a Minecraft Discord Integration Bot - Part 2"
 subtitle:   "Creating Cogs - RCON Commands and Grafana Integration"
-date:       2023-12-13 12:00:00
+date:       2024-01-30 12:00:00
 author:     "Dave C"
 catalog: true
 published: true
@@ -15,6 +15,8 @@ tags:
   - python
   - bots
 ---
+
+I split this post into two parts, with part 1 just about wrapping up the creation of our custom cog loader. In Part 2, we will actually create some cogs that we can start to use in Discord. 
 
 # Creating our first Cog – RCON Commands
 
@@ -122,7 +124,7 @@ Within the context, the command method of the MCRcon object is called with the c
 
 So all we need to do is use our user arguments to send that string to the MCRcon command method, and in this case, we just need to pass our command concatenations as a single string: `command = f"say {thing_to_say}"`. Easy, we are just making commands to be written into the game console after all. As per the guidelines for proper gameserver socket management, we use with `MCRcon(rcon_host, rcon_password, port=rcon_port)`` to establish our connection. Then we set a variable or our response and define it as mcr.command(command) which is the method which sends our string to the server console. 
 
-### Our Second Command - Essentials: Ping
+### Our Second Command - Essentials: Ping / Server Status
 
 Which server admin doesn't obsess about server client latency? Let's make a command to monitor the latency between the discord bot and the gameserver. 
 
@@ -149,4 +151,46 @@ Let's call our two measures, `start_time` and `end_time`, measure their differen
             self.logger.error(f"Failed to retrieve server status: {e}")
 ```
 
+Now, since we have RCON permissions with our Bot, there's no limitation in the set of commands we can create for this cog which can be called from discord, but, Minecraft has a *lot* of console commands. So this is a great time to ask a few questions to the primary stakeholders / users of the bot to determine some baseline / day one command set to aim for. 
+
+The commands reference will be essential to account for the appropriate command parameters, so we will keep this open as we write our cog commands.
+
+https://minecraft.fandom.com/wiki/Commands - Minecraft command reference
+
+After speaking with some players on the server, it was clear that the most important commands would be to set the server time of day and to set the weather, since in ATM9 bad things happen at night and monsters had been ganking new players as soon as night fell (To which I became a victim too in spite of Ten gifting me weapons and armor).
+
+Let's start with setting the gameserver weather, and let's check the Command reference: 
+
+``weather (clear|rain|thunder) [<duration>]``
+
+#### Arguments
+
+``clear|rain|thunder``
+
+``clear – Set the weather to clear.``
+``rain – Set the weather to rain (or snowfall in cold biomes).``
+``thunder – Set the weather to a thunderstorm (or blizzard in cold biomes).``
+
+So this one is really simple, we just need to create a discord interaction that will call /weather in rcon and pass an argument for the weather type along with the interaction. We will create this command under our already created rcon commands group, by adding the decorator ``@rcon.command`` to the start of the function. 
+
+As always we pass self (an instance of the rcon_commands cog including the bot as an attribute) and since these are interactions and not basic discord text commands, we use Interaction: discord.Interaction before adding a string type argument for the weather type. 
+
+Its always a good idea to do some input validation for server commands. As a basic check, I will check the supplied arguments to make sure that they match the possible weather states as listed in the command reference. Let's also add some logic about how to inform the user and proceed if they do enter an invalid weather type. Since we passed self to the command, this means we can use our existing log handler, so let's make sure we are capturing steps as we progress through the command. It wouldn't hurt to add some try and except blocks to this code but this will do the job: 
+
+```python
+@rcon.command(name="weather", description="Change the weather. Usage <weather_type> \n Valid weather types: clear, rain, thunder")
+@has_permissions(manage_channels=True)
+async def weather(self, Interaction: discord.Interaction, weather_type: str):
+    """ Change the weather. Usage <weather_type> \n Valid weather types: clear, rain, thunder"""
+    valid_types = ["clear", "rain", "thunder"]
+    if weather_type.lower() not in valid_types:
+        await Interaction.response.send_message("Invalid weather type. Choose from clear, rain, or thunder.")
+        self.logger.warning(f"{Interaction.user} attempted to set an Invalid weather type: {weather_type}")
+        return
+    command = f"/weather {weather_type}"
+    with MCRcon(rcon_host, rcon_password, port=rcon_port) as mcr:
+        response = mcr.command(command)
+        await Interaction.response.send_message(f"Weather changed to {weather_type}.")
+        self.logger.info(f"{Interaction.user} changed Weather to {weather_type}.")
+```
 
