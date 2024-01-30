@@ -7,7 +7,7 @@ author:     "Dave C"
 catalog: true
 published: true
 header-mask: 0.5
-header-img: "img/in-post/post-minecraft-discord/header_bg.png"
+header-img: "img/in-post/post-minecraft-discord/header_bg_part2.png"
 tags:
   - minecraft
   - discord
