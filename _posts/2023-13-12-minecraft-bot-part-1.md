@@ -1,6 +1,6 @@
 ﻿---
 layout:     post
-title:      "Creating a Minecraft Discord Integration Bot"
+title:      "Creating a Minecraft Discord Integration Bot - Part 1"
 subtitle:   "A modular Discord bot for Minecraft server commands and monitoring in Grafana"
 date:       2023-12-13 12:00:00
 author:     "Dave C"
@@ -550,7 +550,7 @@ And to complete our cog management commands for now, it would be useful to list 
         logger(f"Sent loaded extensions")
 ```
 
-We don’t have any cogs to load yet, which we will move on to in part 2 of this writeup, but keep in mind that the cog management functions we now have available for the bot will work for any discord cog! If we wanted to we could find a git repo containing a discord cog for a chess game and load it here, or a cog which tells us the weather – anything as long as it is a properly packaged cog and we add it to the .\cogs directory. 
+We don’t have any cogs to load yet, which we will move on to next, but keep in mind that the cog management functions we now have available for the bot will work for any discord cog! If we wanted to we could find a git repo containing a discord cog for a chess game and load it here, or a cog which tells us the weather – anything as long as it is a properly packaged cog and we add it to the .\cogs directory. 
 
-And that's it for part 1 of creating Quantum Craft. In part 2 I will go through the basics of creating a Cog, and then create our two primary cogs for RCON commands and Grafana integration. 
+
 
