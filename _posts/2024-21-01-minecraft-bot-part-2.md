@@ -216,15 +216,17 @@ The next problem for the server was making sure players ended up in the same pla
 
 #### Teleport Commands
 
+After reading through the Minecraft commands documentation I was impressed with the sheer amount of optional parameters available. The teleport command can accept multiple targets and the player rotation can optionally be set to face a specific location or entity. In most cases, I won't be needing every kind of teleport and for our server, teleport <target> <destinationplayer> would suffice. I decided to streamline several commands to keep the functionality we want without having to account for all of the optional parameters, but as an example, let's account for all acceptable teleport commands in our teleport command.  
+
 - ``teleport <destination>``
 - ``teleport <targets> <destination>``: Teleports the executor or the specified entity(s) to the position of an entity, and makes its rotation the same as the specified entity's.
--``teleport <location>``: Teleports the executor to a certain position (and changes its rotation to the command's execution rotation).
+- ``teleport <location>``: Teleports the executor to a certain position (and changes its rotation to the command's execution rotation).
 - ``teleport <targets> <location>``: Teleports the entity(s) to a certain position (without changing their rotation).
 - ``teleport <targets> <location> <rotation>``
 - ``teleport <targets> <location> facing <facingLocation>``
 - ``teleport <targets> <location> facing entity <facingEntity> [<facingAnchor>]``: Teleports the entity(s) to a certain position and changes their rotation to the specified rotation.
 
-Let's start with a basic person to person teleport which requires two arguments, target and destination. Target, being the player to be teleported and Desgination, which is the position of the player the target will be teleported to. 
+Let's start with a basic person to person teleport which requires two arguments, target and destination. Target, being the player to be teleported and Destination, which is the position of the player the target will be teleported to. 
 
 ```python
 @rcon.command(name="teleport", description="Teleport a player. Usage <player> <destinationplayer>")
