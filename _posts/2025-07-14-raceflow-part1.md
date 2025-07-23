@@ -591,7 +591,7 @@ To run the API locally:
 
 Now, we can check [http://localhost:8000/](vscode-file://vscode-app/c:/Users/davec/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html) for the endpoint list.
 
-![[Pasted image 20250721175246.png]]
+<img src="/img/in-post/raceflow/api_index.png" alt="Detailed Flow" width="120%" />
 
 Bam! our iRacing data API wrapper is completed. I will just have to decide on the ideal place for it to run long term but I'm leaning toward containerization and managing it as a stack in portainer. 
 
