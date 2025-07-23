@@ -1,6 +1,6 @@
 ﻿---
 layout:     post
-title:      "Bullshido - A Discord Game of Epic Combat, Part 1"
+title:      "Bullshido - A Discord Game of Epic Combat"
 subtitle:   "A cog to drive user engagement based on the awesome but whacky world of Martial Arts"
 date:       2024-12-03 12:00:00
 author:     "Dave C"
