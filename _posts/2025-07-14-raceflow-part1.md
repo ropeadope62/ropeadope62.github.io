@@ -359,8 +359,6 @@ async def stats_member_recent_races():
 
   }
 
-  // ...more races
-
  ]
 
 }
@@ -432,11 +430,7 @@ async def result_lap_data(subsession_id: int = Query(...)):
 
    "incidents": 0,
 
-   // ...
-
   }
-
-  // ...more laps
 
  ]
 
