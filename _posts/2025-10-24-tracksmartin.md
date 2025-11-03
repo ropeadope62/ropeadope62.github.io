@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "TracksMartin: Hits on Demand"
-subtitle:   "Building an Command-Line AI Music Production Tool with Click"
+subtitle:   "Building a Command-Line AI Music Production Tool with Click"
 date:       2025-11-03 08:42:52
 author:     "Dave C"
 catalog: true
