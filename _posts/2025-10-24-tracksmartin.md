@@ -27,7 +27,7 @@ This isn't a guide to becoming an expert - it's a walkthrough from someone still
 
 ## Introduction
 
-![TracksMartin](/assets/img/in-post/tracksmartin/cli-interface.png)
+![TracksMartin](/img/in-post/tracksmartin/cli-interface.png)
 
 The tool handles the entire workflow: from generating genre-appropriate lyrics to polling the Suno API for completion, and finally downloading
 
